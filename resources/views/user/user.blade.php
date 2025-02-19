@@ -7,5 +7,8 @@
 </head>
 <body>
     <h1>{{ $id }} , {{ $name }}</h1>
+    <h1>Halaman User</h1>
+    <p>ID user : {{ $id }}</p>
+    <p>Nama User : {{ $name }}</p>
 </body>
 </html>

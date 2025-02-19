@@ -25,12 +25,12 @@ Route::get('/', function () {
 Route::get('/', [HomeController::class, 'index']);
 
 //Routes for ProductsController
-Route::prefix('category')->group(function(){
-    Route::get('/food-beverage', [ProductsController::class, 'foodbeverage']);
-    Route::get('/beauty-health', [ProductsController::class, 'beautyhealth']);
-    Route::get('/home-care', [ProductsController::class, 'homecare']);
-    Route::get('/baby-kid', [ProductsController::class, 'babykid']);
-});     
+Route::prefix('kategori')->group(function () {
+    Route::get('/foodbbeverage', [ProductsController::class, 'foodbeverage']);
+    Route::get('/beautyhealth', [ProductsController::class, 'beautyhealth']);
+    Route::get('/homecare', [ProductsController::class, 'homecare']);
+    Route::get('/babykid', [ProductsController::class, 'babykid']);
+});
 
 //Route for UserController
 Route::get('/user/{$id}/name/{$name}', [UserController::class, 'user']);
