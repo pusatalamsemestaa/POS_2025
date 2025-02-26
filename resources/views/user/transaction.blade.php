@@ -6,6 +6,6 @@
     <title>Point Of Sales</title>
 </head>
 <body>
-    <h2>Selamat Datang</h2>
+    <h2>Total Transaksi</h2>
 </body>
 </html> 
