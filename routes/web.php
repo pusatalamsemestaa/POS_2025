@@ -1,11 +1,20 @@
 <?php
 
+use App\Http\Controllers\LevelController;
 use Illuminate\Support\Facades\Route;
-use App\HTTP\Controllers\HomeController;
-use App\Http\Controllers\ProductsController;
-use App\Http\Controllers\SalesController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\TransactionController;
+
+Route::get('/' , function () {
+    return view('welcome');
+});
+
+Route::get('/level', [LevelController::class, 'index']);
+
+//use Illuminate\Support\Facades\Route;
+//use App\HTTP\Controllers\HomeController;
+//use App\Http\Controllers\ProductsController;
+//use App\Http\Controllers\SalesController;
+//use App\Http\Controllers\UserController;
+//use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,18 +28,18 @@ use App\Http\Controllers\TransactionController;
 */
 
 
-//Route for HomeController
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/transaction', [TransactionController::class, 'index']);
-//Routes for ProductsController
-Route::prefix('kategori')->group(function () {
-    Route::get('/foodbbeverage', [ProductsController::class, 'foodbeverage']);
-    Route::get('/beautyhealth', [ProductsController::class, 'beautyhealth']);
-    Route::get('/homecare', [ProductsController::class, 'homecare']);
-    Route::get('/babykid', [ProductsController::class, 'babykid']);
-});
+///Route for HomeController
+//Route::get('/', [HomeController::class, 'index']);
+//Route::get('/transaction', [TransactionController::class, 'index']);
+///Routes for ProductsController
+//Route::prefix('kategori')->group(function () {
+    //Route::get('/foodbbeverage', [ProductsController::class, 'foodbeverage']);
+    //Route::get('/beautyhealth', [ProductsController::class, 'beautyhealth']);
+    //Route::get('/homecare', [ProductsController::class, 'homecare']);
+    //Route::get('/babykid', [ProductsController::class, 'babykid']);
+//});
 
-//Route for UserController
-Route::get('/user/{id}/name/{name}', [UserController::class, 'user']);
-//Route for SalesController
+///Route for UserController
+//Route::get('/user/{id}/name/{name}', [UserController::class, 'user']);
+///Route for SalesController
 //Route::get('/transaction', [SalesController::class, 'transaction']);
