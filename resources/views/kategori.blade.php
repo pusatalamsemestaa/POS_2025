@@ -4,7 +4,7 @@
         <title>Data Kategori Barang</title>
     </head>
     <body>
-        <h1>Data Kategori baranf</h1>
+        <h1>Data Kategori barang</h1>
         <table border="1" cellpadding="2" cellspacing="0">
             <tr>
                 <th>ID</th>
