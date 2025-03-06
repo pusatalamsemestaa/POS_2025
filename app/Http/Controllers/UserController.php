@@ -8,27 +8,57 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    //public function user($id, string $name = null) {
-    //return view('user1')->with(["id" => $id ,"name" => $name]);
-    //}
-
     public function index()
     {
-        $user = UserModel::create([
-                'username' => 'manager11',
-                'nama' => 'Manager11',
-                'password' => Hash::make('12345'),
-                'level_id' => 2
+        $users = UserModel::all(); 
+        return view('user', compact('users')); 
+    }
+
+    public function tambah()
+    {
+        return view('user_tambah');
+    }
+
+    public function tambah_simpan(Request $request)
+    {
+        UserModel::create([
+            'username' => $request->username,
+            'nama' => $request->nama,
+            'password' => Hash::make($request->password),
+            'level_id' => $request->level_id
         ]);
 
-        $user->username = 'manager12';
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
+    }
+
+    public function ubah($id)
+    {
+        $user = UserModel::findOrFail($id);
+        return view('user_ubah', compact('user'));
+    }
+
+    public function ubah_simpan(Request $request, $id)
+    {
+        $user = UserModel::findOrFail($id);
+
+        $user->username = $request->username;
+        $user->nama = $request->nama;
+        $user->level_id = $request->level_id;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
 
         $user->save();
 
-        $wasCahnged = $user->wasChanged(); //true
-        $wasUsernameChanged = $user->wasChanged('username'); //true
-        $wasFieldsChanged = $user->wasChanged(['username', 'level_id']); //true
-        $wasNamaChanged = $user->wasChanged('nama'); //false
-        dd($user->wasChanged(['nama', 'usename'])); //true
+        return redirect()->route('user.index')->with('success', 'Data berhasil diperbarui');
+    }
+
+    public function hapus($id)
+    {
+        $user = UserModel::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
     }
 }
