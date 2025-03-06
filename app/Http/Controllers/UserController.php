@@ -10,8 +10,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = UserModel::all(); 
-        return view('user', compact('users')); 
+        $user = UserModel::with('level')->get(); 
+       return view('user', ['data' => $user]);
     }
 
     public function tambah()

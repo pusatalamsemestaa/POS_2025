@@ -23,21 +23,25 @@
                     <th>Username</th>
                     <th>Nama</th>
                     <th>ID Level Pengguna</th>
+                    <th>Kode level</th>
+                    <th>Nama Level</td>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @if ($users->isEmpty())
+                @if ($data->isEmpty())
                     <tr>
                         <td colspan="5" class="text-center">Tidak ada data user.</td>
                     </tr>
                 @else
-                    @foreach ($users as $user)
+                    @foreach ($data as $user)
                     <tr>
                         <td>{{ $user->user_id }}</td>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->nama }}</td>
                         <td>{{ $user->level_id }}</td>
+                        <td>{{ optional($user->level)->level_kode }}</td>
+                        <td>{{ optional($user->level)->level_nama }}</td>
                         <td>
                             <a href="{{ route('user.ubah', $user->user_id) }}" class="btn btn-warning btn-sm">Ubah</a>
                             <form action="{{ route('user.hapus', $user->user_id) }}" method="POST" class="d-inline">
@@ -55,3 +59,4 @@
     </div>
 </body>
 </html>
+
