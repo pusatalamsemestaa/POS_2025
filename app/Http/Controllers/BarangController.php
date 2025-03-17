@@ -39,10 +39,10 @@ class BarangController extends Controller
         $barang = BarangModel::select('barang_id', 'kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual')
             ->with('kategori');
 
-            //Filter data Barang berdasarkan kategori_id
-            iF($request->kategori_id){
-                $barang->where('kategori_id', $request->kategori_id);
-            }
+        //Filter data Barang berdasarkan kategori_id
+        if ($request->kategori_id) {
+            $barang->where('kategori_id', $request->kategori_id);
+        }
         return DataTables::of($barang)
             // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
             ->addIndexColumn()
@@ -81,20 +81,24 @@ class BarangController extends Controller
     {
         $request->validate([
             // Barangname harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_Barang kolom Barangname
-            'barang_id' => 'required|string|min:3|unique:m_Barang,Barangname',
-            'nama' => 'required|string|max:100', // nama harus diisi, berupa string, dan maksimal 100 karakter
-            'password' => 'required|min:5', // password harus diisi dan minimal 5 karakter
-            'kategori_id' => 'required|integer' // kategori_id harus diisi dan berupa angka
+            'barang_id' => 'required|string|min:3|unique:m_barang,barang_id',
+            'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode',
+            'barang_nama' => 'required|string|max:100',
+            'harga_beli' => 'required|integer',
+            'harga_jual' => 'required|integer',
+            'kategori_id' => 'required|integer'
         ]);
 
         BarangModel::create([
-            'Barangname' => $request->Barangname,
-            'nama' => $request->nama,
-            'password' => bcrypt($request->password), // password dienkripsi sebelum disimpan
+            'barang_id' => $request->barang_id,
+            'barang_kode' => $request->barang_kode,
+            'barang_nama' => $request->barang_nama,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
             'kategori_id' => $request->kategori_id
         ]);
 
-        return redirect('/Barang')->with('success', 'Data Barang berhasil disimpan');
+        return redirect('/barang')->with('success', 'Data Barang berhasil disimpan');
     }
 
     // Menampilkan detail Barang
@@ -138,11 +142,11 @@ class BarangController extends Controller
     // Menyimpan perubahan data Barang
     public function update(Request $request, string $id)
     {
-        $request->validate([ 
+        $request->validate([
             'barang_id' => 'required|integer',
             'kategori_id' => 'required|integer',
             'barang_kode' => 'required|varcar|max:10',
-            'barang_nama' => 'required|varchar|max:100', 
+            'barang_nama' => 'required|varchar|max:100',
             'harga_beli' => 'required|integer',
             'harga_jual' => 'required|integer',
         ]);
@@ -151,32 +155,30 @@ class BarangController extends Controller
             'barang_id' => $request->barang_id,
             'kategori_id' => $request->kategori_id,
             'barang_kode' => $request->barang_kode,
-            'barang_nama' => $request->barang_nama, 
+            'barang_nama' => $request->barang_nama,
             'harga_beli' => $request->harga_beli,
             'harga_jual' => $request->harga_jual
         ]);
 
-        return redirect('/Barang')->with('success', 'Data Barang berhasil diubah');
-
-        
+        return redirect('/barang')->with('success', 'Data Barang berhasil diubah');
     }
 
     // Menghapus data Barang
-public function destroy(string $id)
-{
-    $check = BarangModel::find($id);
-    if (!$check) { // untuk mengecek apakah data Barang dengan id yang dimaksud ada atau tidak
-        return redirect('/Barang')->with('error', 'Data Barang tidak ditemukan');
+    public function destroy(string $id)
+    {
+        $check = BarangModel::find($id);
+        if (!$check) { // untuk mengecek apakah data Barang dengan id yang dimaksud ada atau tidak
+            return redirect('/barang')->with('error', 'Data Barang tidak ditemukan');
+        }
+
+        try {
+            BarangModel::destroy($id); // Hapus data Barang
+
+            return redirect('/barang')->with('success', 'Data Barang berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+
+            // Jika terjadi error ketika menghapus data, redirect kembali ke halaman dengan membawa pesan error
+            return redirect('/barang')->with('error', 'Data Barang gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
+        }
     }
-
-    try {
-        BarangModel::destroy($id); // Hapus data Barang
-
-        return redirect('/Barang')->with('success', 'Data Barang berhasil dihapus');
-    } catch (\Illuminate\Database\QueryException $e) {
-
-        // Jika terjadi error ketika menghapus data, redirect kembali ke halaman dengan membawa pesan error
-        return redirect('/Barang')->with('error', 'Data Barang gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
-    }
-}
 }

@@ -10,13 +10,18 @@ class BarangModel extends Model
 {
     use HasFactory;
 
-    protected $table ='m_barang' ;        //Mendefinisikan nama tabel yang digunakan oleh model ini
-    protected $primaryKey = 'barang_id';  //mendefinisikan primary key dari tabel yang digunakan
+    protected $table = 'm_barang'; 
+    protected $primaryKey = 'barang_id';
 
-    protected $fillable = ['barang_id', 'kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual'];
+     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
 
-    public function kategori(): BelongsTo
+     protected $fillable = ['kategori_id', 'barang_kode', 'barang_nama', 'harga_beli','harga_jual']; 
+     public function kategori(): BelongsTo
     {
-        return $this->belongsTo(KategoriModel::class, 'kategori_id', 'kategori_id');
+        return $this->belongsTo(kategoriModel::class, 'kategori_id', 'kategori_id');
     }
 }

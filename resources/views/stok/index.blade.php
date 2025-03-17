@@ -5,7 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('barang/create') }}">Tambah</a>
+                <a class="btn btn-sm btn-primary mt-1" href="{{ url('stok/create') }}">Tambah</a>
             </div>
         </div>
         <div class="card-body">
@@ -23,15 +23,14 @@
 
             
 
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_barang">
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_stok">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Kode</th>
-                        <th>Nama Barang</th>
-                        <th>Harga Beli</th>
-                        <th>Harga Jual</th>
-                        <th>Kategori</th>
+                        <th>Stok ID</th>
+                        <th>Barang ID</th>
+                        <th>User ID</th>
+                        <th>Stok Tanggal</th>
+                        <th>Stok Jumlah</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -46,16 +45,21 @@
 @push('js')
     <script>
         $(document).ready(function () {
-            var datatable = $('#table_barang').DataTable({
+            var datatable = $('#table_stok').DataTable({
                 serverside: true,
                 processing: true,
                 ajax: {
-                    url: "{{ url('barang/list') }}",
-                    type: "POST",
-                    data: function (d) {
-                        d.kategori_id = $('#kategori_id').val();
-                    }
-                },
+    url: "{{ url('stok/list') }}",
+    type: "POST",
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    data: function (d) {
+        d.barang_id = $('#barang_id').val();
+        d.user_id = $('#user_id').val();  // Pastikan ID user juga dikirim jika ada filter
+    }
+}
+,
                 columns: [
                     {
                         data: 'DT_RowIndex',
@@ -64,29 +68,29 @@
                         searchable: false
                     },
                     {
-                        data: 'barang_kode',
+                        data: 'stok_id',
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'barang_nama',
+                        data: 'barang_id',
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'harga_beli',
+                        data: 'user_id',
                         orderable: true,
                         searchable: true,
                         className: 'text-right'
                     },
                     {
-                        data: 'harga_jual',
+                        data: 'stok_tanggal',
                         orderable: true,
                         searchable: true,
                         className: 'text-right'
                     },
                     {
-                        data: 'kategori_id',
+                        data: 'stok_jumlah',
                         orderable: true,
                         searchable: true,
                         className: 'text-right'
@@ -99,7 +103,7 @@
                 ]
             });
 
-            $('#kategori_id').on('change', function(){
+            $('#barang_id').on('change', function(){
                 datatable.ajax.reload();
             });
         });

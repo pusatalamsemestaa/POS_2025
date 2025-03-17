@@ -73,9 +73,9 @@ class LevelController extends Controller
     {
         $request->validate([
             // username harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_user kolom username
-            'level_id' => 'required|string|min:3|unique:m_level',
+            'level_id' => 'required|string|min:1|unique:m_level',
             'katehori_kode' => 'required|string|max:200', // nama harus diisi, berupa string, dan maksimal 100 karakter
-            'level_nama' => 'required|atring|max:100', // password harus diisi dan minimal 5 karakter
+            'level_nama' => 'required|string|max:100', // password harus diisi dan minimal 5 karakter
         ]);
 
         LevelModel::create([

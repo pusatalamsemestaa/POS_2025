@@ -24,7 +24,7 @@ class KategoriController extends Controller
 
         $activeMenu = 'kategori'; // set menu yang sedang aktif
 
-        $kategori = KategoriModel::all(); 
+        $kategori = KategoriModel::all();
         return view('kategori.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
     }
 
@@ -73,15 +73,15 @@ class KategoriController extends Controller
     {
         $request->validate([
             // username harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_user kolom username
-            'kategori_id' => 'required|string|min:3|unique:m_kategori',
-            'katehori_kode' => 'required|string|max:200', // nama harus diisi, berupa string, dan maksimal 100 karakter
-            'kategori_nama' => 'required|atring|max:100', // password harus diisi dan minimal 5 karakter
+            'kategori_id' => 'required|string|min:3|unique:m_kategori,kategori_id',
+            'kategori_kode' => 'required|string|max:200|unique:m_kategori,kategori_kode', // nama harus diisi, berupa string, dan maksimal 100 karakter
+            'kategori_nama' => 'required|string|max:100', // password harus diisi dan minimal 5 karakter
         ]);
 
         KategoriModel::create([
             'kategori_id' => $request->kategori_id,
             'kategori_kode' => $request->kategori_kode,
-            'kategori_nama' => $request -> kategori_nama,
+            'kategori_nama' => $request->kategori_nama,
         ]);
 
         return redirect('/kategori')->with('success', 'Data kategori berhasil disimpan');
@@ -132,33 +132,33 @@ class KategoriController extends Controller
             'kategori_kode' => 'required|string|max:20', // Ganti 'varchar' dengan 'string'
             'kategori_nama' => 'required|string|max:100' // Ganti 'varchar' dengan 'string'
         ]);
-    
+
         KategoriModel::find($id)->update([
             'kategori_id' => $request->kategori_id,
             'kategori_kode' => $request->kategori_kode,
             'kategori_nama' => $request->kategori_nama
         ]);
-    
+
         return redirect('/kategori')->with('success', 'Data kategori berhasil diubah');
     }
-    
+
 
     // Menghapus data user
-public function destroy(string $id)
-{
-    $check = KategoriModel::find($id);
-    if (!$check) { // untuk mengecek apakah data user dengan id yang dimaksud ada atau tidak
-        return redirect('/kategori')->with('error', 'Data kategori tidak ditemukan');
+    public function destroy(string $id)
+    {
+        $check = KategoriModel::find($id);
+        if (!$check) { // untuk mengecek apakah data user dengan id yang dimaksud ada atau tidak
+            return redirect('/kategori')->with('error', 'Data kategori tidak ditemukan');
+        }
+
+        try {
+            KategoriModel::destroy($id); // Hapus data user
+
+            return redirect('/kategori')->with('success', 'Data kategori berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+
+            // Jika terjadi error ketika menghapus data, redirect kembali ke halaman dengan membawa pesan error
+            return redirect('/kategori')->with('error', 'Data ategori gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
+        }
     }
-
-    try {
-        KategoriModel::destroy($id); // Hapus data user
-
-        return redirect('/kategori')->with('success', 'Data kategori berhasil dihapus');
-    } catch (\Illuminate\Database\QueryException $e) {
-
-        // Jika terjadi error ketika menghapus data, redirect kembali ke halaman dengan membawa pesan error
-        return redirect('/kategori')->with('error', 'Data ategori gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
-    }
-}
 }
