@@ -9,7 +9,6 @@
     <div class="card-body">
         <form method="POST" action="{{ url('barang') }}" class="form-horizontal">
             @csrf
-
             <div class="form-group row">
                 <label class="col-1 control-label col-form-label">Kategori</label>
                 <div class="col-11">

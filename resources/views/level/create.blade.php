@@ -10,15 +10,6 @@
         <form method="POST" action="{{ url('level') }}" class="form-horizontal">
             @csrf
             <div class="form-group row">
-                <label class="col-1 control-label col-form-label">ID</label>
-                <div class="col-11">
-                    <input class="form-control" id="level_id" name="level_id" required value="{{ old('level_id') }}" required>
-                    @error('level_id')
-                    <small class="form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-            </div>
-            <div class="form-group row">
                 <label class="col-1 control-label col-form-label">level kode</label>
                 <div class="col-11">
                     <input type="text" class="form-control" id="level_kode" name="level_kode" value="{{ old('level_kode') }}" required>

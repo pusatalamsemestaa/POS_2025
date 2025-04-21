@@ -70,7 +70,7 @@ class BarangController extends Controller
             'title' => 'Tambah Barang baru'
         ];
 
-        $kategori = kategoriModel::all(); // ambil data kategori untuk ditampilkan di form
+        $kategori = KategoriModel::all();
         $activeMenu = 'Barang'; // set menu yang sedang aktif
 
         return view('Barang.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
@@ -81,7 +81,6 @@ class BarangController extends Controller
     {
         $request->validate([
             // Barangname harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_Barang kolom Barangname
-            'barang_id' => 'required|string|min:3|unique:m_barang,barang_id',
             'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode',
             'barang_nama' => 'required|string|max:100',
             'harga_beli' => 'required|integer',
@@ -90,7 +89,6 @@ class BarangController extends Controller
         ]);
 
         BarangModel::create([
-            'barang_id' => $request->barang_id,
             'barang_kode' => $request->barang_kode,
             'barang_nama' => $request->barang_nama,
             'harga_beli' => $request->harga_beli,

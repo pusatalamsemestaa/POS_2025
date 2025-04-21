@@ -17,17 +17,6 @@
                 @csrf
                 {!! method_field('PUT') !!} <!-- Tambahkan method PUT untuk proses edit -->
                 <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">level</label>
-                    <div class="col-11">
-                        <input class="form-control" id="level_id" name="level_id" required
-                        value="{{ old('level_id', $level->level_id) }}">
-                        </select>
-                        @error('level_id')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>  </div>     
-
-                <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Kode</label>
                     <div class="col-11">
                         <input type="text" class="form-control" id="level_kode" name="level_kode"

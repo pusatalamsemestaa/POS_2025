@@ -16,16 +16,6 @@
             <form method="POST" action="{{ url('/kategori/'.$kategori->kategori_id) }}" class="form-horizontal">
                 @csrf
                 {!! method_field('PUT') !!} <!-- Tambahkan method PUT untuk proses edit -->
-                <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">kategori</label>
-                    <div class="col-11">
-                        <input class="form-control" id="kategori_id" name="kategori_id" required
-                        value="{{ old('kategori_id', $kategori->kategori_id) }}">
-                        </select>
-                        @error('kategori_id')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>  </div>     
 
                 <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Kode</label>

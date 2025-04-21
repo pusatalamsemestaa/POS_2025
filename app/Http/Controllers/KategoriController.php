@@ -41,7 +41,7 @@ class KategoriController extends Controller
             ->addColumn('aksi', function ($kategori) { // menambahkan kolom aksi
                 $btn = '<a href="' . url('/kategori/' . $kategori->kategori_id) . '" class="btn btn-info btn-sm">Detail</a>';
                 $btn .= '<a href="' . url('/kategori/' . $kategori->kategori_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a>';
-                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $kategori->kategori_id) . '">' .
+                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/kategori/' . $kategori->kategori_id) . '">' .
                     csrf_field() . method_field('DELETE') .
                     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
                 return $btn;
@@ -73,13 +73,11 @@ class KategoriController extends Controller
     {
         $request->validate([
             // username harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_user kolom username
-            'kategori_id' => 'required|string|min:3|unique:m_kategori,kategori_id',
             'kategori_kode' => 'required|string|max:200|unique:m_kategori,kategori_kode', // nama harus diisi, berupa string, dan maksimal 100 karakter
             'kategori_nama' => 'required|string|max:100', // password harus diisi dan minimal 5 karakter
         ]);
 
         KategoriModel::create([
-            'kategori_id' => $request->kategori_id,
             'kategori_kode' => $request->kategori_kode,
             'kategori_nama' => $request->kategori_nama,
         ]);
@@ -128,13 +126,11 @@ class KategoriController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'kategori_id' => 'required|integer',  // Perbaiki dari 'interger' menjadi 'integer'
             'kategori_kode' => 'required|string|max:20', // Ganti 'varchar' dengan 'string'
             'kategori_nama' => 'required|string|max:100' // Ganti 'varchar' dengan 'string'
         ]);
 
         KategoriModel::find($id)->update([
-            'kategori_id' => $request->kategori_id,
             'kategori_kode' => $request->kategori_kode,
             'kategori_nama' => $request->kategori_nama
         ]);
@@ -147,18 +143,17 @@ class KategoriController extends Controller
     public function destroy(string $id)
     {
         $check = KategoriModel::find($id);
+
         if (!$check) { // untuk mengecek apakah data user dengan id yang dimaksud ada atau tidak
-            return redirect('/kategori')->with('error', 'Data kategori tidak ditemukan');
+            return redirect('/kategori')->with('error', 'Data user tidak ditemukan');
         }
 
         try {
             KategoriModel::destroy($id); // Hapus data user
-
-            return redirect('/kategori')->with('success', 'Data kategori berhasil dihapus');
+            return redirect('/kategori')->with('success', 'Data user berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
-
             // Jika terjadi error ketika menghapus data, redirect kembali ke halaman dengan membawa pesan error
-            return redirect('/kategori')->with('error', 'Data ategori gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
+            return redirect('/kategori')->with('error', 'Data user gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
         }
     }
 }

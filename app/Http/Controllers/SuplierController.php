@@ -73,13 +73,11 @@ class SuplierController extends Controller
     {
         $request->validate([
             // username harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_user kolom username
-            'suplier_id' => 'required|string|min:3|unique:m_suplier',
             'katehori_kode' => 'required|string|max:200', // nama harus diisi, berupa string, dan maksimal 100 karakter
             'suplier_nama' => 'required|atring|max:100', // password harus diisi dan minimal 5 karakter
         ]);
 
         SuplierModel::create([
-            'suplier_id' => $request->suplier_id,
             'suplier_kode' => $request->suplier_kode,
             'suplier_nama' => $request -> suplier_nama,
         ]);
@@ -128,13 +126,13 @@ class SuplierController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'suplier_id' => 'required|integer',  // Perbaiki dari 'interger' menjadi 'integer'
+
             'suplier_kode' => 'required|string|max:20', // Ganti 'varchar' dengan 'string'
             'suplier_nama' => 'required|string|max:100' // Ganti 'varchar' dengan 'string'
         ]);
     
         SuplierModel::find($id)->update([
-            'suplier_id' => $request->suplier_id,
+
             'suplier_kode' => $request->suplier_kode,
             'suplier_nama' => $request->suplier_nama
         ]);
