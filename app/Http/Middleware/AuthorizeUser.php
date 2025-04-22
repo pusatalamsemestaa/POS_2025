@@ -24,4 +24,6 @@ class AuthorizeUser
         // jika tidak punya role, maka tampilkan error 403
         abort(403, 'Forbidden. Kamu tidak punya akses ke halaman ini');
     }
+    
+
 }
