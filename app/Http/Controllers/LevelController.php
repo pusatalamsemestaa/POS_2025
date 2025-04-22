@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LevelModel;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use App\Models\LevelModel;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class LevelController extends Controller
 {
     public function index()
     {
+    
+        //DB::insert('insert into m_level (level_kode, level_nama, created_at) values (?, ?, ?)', ['CUS', 'Pelanggan', now()]);
+        //return 'Insert data baru ditambahkan';
+
+        //$row = DB::update('update m_level set level_nama = ? where level_kode = ?', ['Customer', 'CUS']);
+        //return 'Update data berhasil.Jumlah data yang diupdate: ' . $row. ' baris'; ;
+
+        //$row = DB::delete('delete from m_level where level_kode = ?', ['CUS']);
+        //return 'Delete data berhasil. Jumlah data yang dihapus: '. $row.' baris';
+
         $breadcrumb = (object) [
             'title' => 'Daftar Level',
             'list' => ['Home', 'Level']
@@ -23,9 +34,7 @@ class LevelController extends Controller
 
         $activeMenu = 'level'; // set menu yang sedang aktif
 
-        $level=LevelModel::all();
-
-        return view('level.index', ['breadcrumb' => $breadcrumb, 'page' => $page,'level' => $level, 'activeMenu' => $activeMenu]);
+        return view('level.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     // Ambil data level dalam bentuk json untuk datatables
@@ -166,7 +175,6 @@ class LevelController extends Controller
             return redirect('/level')->with('error', 'Data level gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
         }
     }
-
     public function create_ajax()
     {
         $level = LevelModel::select('level_id', 'level_nama')->get();
@@ -250,7 +258,7 @@ class LevelController extends Controller
     }
 
     public function delete_ajax(Request $request, $id)
-{
+    {
     // cek apakah request dari ajax
     if ($request->ajax() || $request->wantsJson()) {
         $level = LevelModel::find($id);
@@ -275,17 +283,77 @@ class LevelController extends Controller
             ]);
         }
     }
-    return redirect('/');
-}
-
-    
-
-    public function show_ajax($id)
-    {
-        $level = LevelModel::find($id);
-        return view('level.show_ajax', compact('level'));
-
-        
+    return redirect('/');   
     }
- 
-}
+    
+    public function import()
+    {
+        return view('level.import');
+    }
+    
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+    
+            $rules = [
+                // Validasi file harus xlsx, maksimal 1MB
+                'file_level' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'   => false,
+                    'message'  => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+    
+            // Ambil file dari request
+            $file = $request->file('file_level');
+    
+            // Membuat reader untuk file excel dengan format Xlsx
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true); // Hanya membaca data saja
+    
+            // Load file excel
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet(); // Ambil sheet yang aktif
+    
+            // Ambil data excel sebagai array
+            $data = $sheet->toArray(null, false, true, true);
+            $insert = [];
+    
+            // Pastikan data memiliki lebih dari 1 baris (header + data)
+            if (count($data) > 1) {
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) { // Baris pertama adalah header, jadi lewati
+                        $insert[] = [
+                            'level_kode' => $value['A'],
+                            'level_nama' => $value['B'],
+                            'created_at'  => now(),
+                        ];
+                    }
+                }
+    
+                if (count($insert) > 0) {
+                    // Insert data ke database, jika data sudah ada, maka diabaikan
+                    LevelModel::insertOrIgnore($insert);
+                }
+    
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Data berhasil diimport'
+                ]);
+            } else {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+    
+        return redirect('/');
+    }
+}    
