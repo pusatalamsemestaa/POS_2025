@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuplierModel;
+use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
 // use Illuminate\Support\Facades\Hash;
 
 
@@ -56,7 +58,7 @@ class SuplierController extends Controller
             })->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
             ->make(true);
     }
-
+    
     // Menampilkan halaman form tambah supplier
     public function create()
     {
@@ -275,13 +277,12 @@ class SuplierController extends Controller
         return redirect('/');
     }
 
-    public function import()
-    {
+        public function import(){
         return view('supplier.import');
-    }
+        }
 
-    public function import_ajax(Request $request)
-    {
+        public function import_ajax(Request $request)
+        {
         if ($request->ajax() || $request->wantsJson()) {
 
             $rules = [
@@ -354,8 +355,8 @@ class SuplierController extends Controller
             'supplier_nama',
             'supplier_alamat'
         )
-            ->orderBy('supplier_id')
-            ->get();
+        ->orderBy('supplier_id')
+        ->get();
 
         //load library excel
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -384,7 +385,7 @@ class SuplierController extends Controller
         }
 
         $sheet->setTitle('Data Supplier'); //set judul sheet
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx'); //set writer
+        $writer = IOFactory ::createWriter($spreadsheet, 'Xlsx'); //set writer
         $filename = 'Data_Supplier_' . date('Y-m-d_H-i-s') . '.xlsx'; //set nama file
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -398,5 +399,24 @@ class SuplierController extends Controller
 
         $writer->save('php://output'); //simpan file ke output
         exit; //keluar dari scriptA
+    }
+
+    public function export_pdf(){
+        $supplier = SuplierModel::select(
+            'supplier_kode',
+            'supplier_nama',
+            'supplier_alamat'
+        )
+        ->orderBy('supplier_id')
+        ->orderBy('supplier_kode')
+        ->get();
+
+        // use Barryvdh\DomPDF\Facade\Pdf;
+        $pdf = PDF::loadView('supplier.export_pdf', ['supplier' => $supplier]);
+        $pdf->setPaper('A4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); // set true jika ada gambar dari url
+        $pdf->render(); // render pdf
+
+        return $pdf->stream('Data Supplier '.date('Y-m-d H-i-s').'.pdf');
     }
 }
