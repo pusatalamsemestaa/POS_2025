@@ -5,62 +5,61 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('stok/create') }}">Tambah</a>
+                <button onclick="modalAction('{{ url('/level/import') }}')" class="btn btn-info">Import Level</button>
+                {{-- <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a> --}}
+                <a href="{{ url('/level/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Level</a> 
+                <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-success">Tambah Ajax</button>
             </div>
         </div>
         <div class="card-body">
+            @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
             @if(session('error'))
                 <div class="alert alert-danger">
                     {{ session('error') }}
                 </div>
             @endif
-            
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            
-
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_stok">
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_level">
                 <thead>
                     <tr>
-                        <th>Stok ID</th>
-                        <th>Barang ID</th>
-                        <th>User ID</th>
-                        <th>Stok Tanggal</th>
-                        <th>Stok Jumlah</th>
+                        <th>ID</th>
+                        <th>Kode Level</th>
+                        <th>Nama Level</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" databackdrop="static"
+        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
 @endpush
 
 @push('js')
-    <script>
-        $(document).ready(function () {
-            var datatable = $('#table_stok').DataTable({
-                serverside: true,
-                processing: true,
-                ajax: {
-    url: "{{ url('stok/list') }}",
-    type: "POST",
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    },
-    data: function (d) {
-        d.barang_id = $('#barang_id').val();
-        d.user_id = $('#user_id').val();  // Pastikan ID user juga dikirim jika ada filter
+<script>
+    function modalAction(url = '') {
+        $('#myModal').load(url, function () {
+            $('#myModal').modal('show');
+        });
     }
-}
-,
+    var dataLevel;
+        $(document).ready(function () {
+             dataLevel = $('#table_level').DataTable({
+                // serverSide: true, jika ingin menggunakan server side processing
+                serverSide: true,
+                ajax: {
+                    "url": "{{ url('level/list') }}",
+                    "dataType": "json",
+                    "type": "POST"
+                },
                 columns: [
+                    // nomor urut dari laravel datatable addIndexColumn()
                     {
                         data: 'DT_RowIndex',
                         className: 'text-center',
@@ -68,44 +67,30 @@
                         searchable: false
                     },
                     {
-                        data: 'stok_id',
+                        data: 'level_kode',
+                        className: '',
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'barang_id',
+                        data: 'level_nama',
+                        className: '',
                         orderable: true,
                         searchable: true
-                    },
-                    {
-                        data: 'user_id',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-right'
-                    },
-                    {
-                        data: 'stok_tanggal',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-right'
-                    },
-                    {
-                        data: 'stok_jumlah',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-right'
                     },
                     {
                         data: 'aksi',
+                        className: '',
                         orderable: false,
                         searchable: false
-                    },
-                ]
+                    },]
             });
 
-            $('#barang_id').on('change', function(){
-                datatable.ajax.reload();
-            });
-        });
-    </script>
+        $('#table_level_filter input').unbind().bind().on('keyup', function(e){
+        if(e.keyCode == 13){ // enter key
+            dataLevel.search(this.value).draw();
+        }
+    });
+});
+</script>
 @endpush
