@@ -9,10 +9,7 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SuplierController;
 
-Route::get('/', [WelcomeController::class, 'index']);
-
 Route::pattern('id', '[0-9]+'); //jika ada parameter id, maka harus berupa angka
-
 // register
 Route::get('register', [AuthController::class, 'register'])->name('register');
 Route::post('register', [AuthController::class, 'postRegister']);
@@ -28,7 +25,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
     Route::get('/', [WelcomeController::class, 'index']);
     // Route Level
 
-    // Artinya semua role di dalam group ini harus punya role ADM (Administrator)
+    // Artinya semua role di dalam group ini harus punya rle ADM (Administrator)
     Route::middleware(['authorize:ADM'])->group(function () {
         Route::group(['prefix' => 'level'], function () {
             Route::get('/', [LevelController::class, 'index']); // menampilkan halaman awal Level
@@ -92,18 +89,21 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
     Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
         Route::group(['prefix' => 'barang'], function () {
-            Route::get('/', [BarangController::class, 'index']);
-            Route::post('/list', [BarangController::class, 'list']);
-            Route::get('/create_ajax', [BarangController::class, 'create_ajax']); // ajax form create
-            Route::post('/barang_ajax', [BarangController::class, 'store_ajax']); // ajax store
-            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); // ajax form edit
-            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']); // ajax update
-            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // ajax form confirm
-            Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // ajax delete
-            Route::get('/import', [BarangController::class, 'import']); // ajax form upload excel
-            Route::post('/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel        
-            Route::get('/export_excel', [BarangController::class,'export_excel']); //export excel   
-            Route::get('/export_pdf', [BarangController::class,'export_pdf']); //export pdf 
+            Route::get('/', [BarangController::class, 'index']); // menampilkan halaman awal Barang
+            Route::post('/list', [BarangController::class, 'list']); // menampilkan data Barang dalam bentuk json untuk datatable
+            Route::get('/create', [BarangController::class, 'create']); // menampilkan halaman form tambah Barang
+            Route::post('/', [BarangController::class, 'store']); // menyimpan data Barang baru
+            Route::get('/create_ajax', [BarangController::class, 'create_ajax']); // menampilkan halaman form tambah Barang ajax
+            Route::post('/ajax', [BarangController::class, 'store_ajax']); // menyimpan data Barang baru ajax
+            Route::get('/{id}', [BarangController::class, 'show']); // menampilkan detail Barang
+            Route::get('/{id}/show_ajax', [BarangController::class, 'show_ajax']); // menampilkan detail Barang ajax
+            Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit Barang
+            Route::put('/{id}', [BarangController::class, 'update']); // menyimpan perubahan data Barang
+            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); // menampilkan halaman form edit Barang ajax
+            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']); // menyimpan perubahan data Barang ajax
+            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // untuk tampilan form confirm delete Barang ajax
+            Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // menghapus data Barang ajax
+            Route::delete('/{id}', [BarangController::class, 'destroy']); // menghapus data Barang
         });
     });
 
