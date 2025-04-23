@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuplierModel;
-use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -14,145 +13,145 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuplierController extends Controller
 {
-    // Menampilkan halaman awal supplier
+    // Menampilkan halaman awal suplier
     public function index()
     {
         $breadcrumb = (object) [
-            'title' => 'Daftar supplier',
-            'list' => ['Home', 'supplier']
+            'title' => 'Daftar suplier',
+            'list' => ['Home', 'suplier']
         ];
 
         $page = (object) [
-            'title' => 'Daftar supplier yang terdaftar dalam sistem'
+            'title' => 'Daftar suplier yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'supplier'; // set menu yang sedang aktif
+        $activeMenu = 'suplier'; // set menu yang sedang aktif
 
-        return view('supplier.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('suplier.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
-    // Ambil data supplier dalam bentuk json untuk datatables
+    // Ambil data suplier dalam bentuk json untuk datatables
     public function list(Request $request)
     {
-        $suppliers = SuplierModel::select('supplier_id', 'supplier_kode', 'supplier_nama', 'supplier_alamat');
+        $supliers = SuplierModel::select('suplier_id', 'suplier_kode', 'suplier_nama', 'suplier_alamat');
 
-        return DataTables::of($suppliers)
+        return DataTables::of($supliers)
             // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
             ->addIndexColumn()
-            ->addColumn('aksi', function ($supplier) { // menambahkan kolom aksi
-                // $btn = '<a href="' . url('/supplier/' . $supplier->supplier_id) . '" class="btn btn-info btn-sm">Detail</a>';
-                // $btn .= '<a href="' . url('/supplier/' . $supplier->supplier_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a>';
-                // $btn .= '<form class="d-inline-block" method="POST" action="' . url('/supplier/' . $supplier->supplier_id) . '">' .
+            ->addColumn('aksi', function ($suplier) { // menambahkan kolom aksi
+                // $btn = '<a href="' . url('/suplier/' . $suplier->suplier_id) . '" class="btn btn-info btn-sm">Detail</a>';
+                // $btn .= '<a href="' . url('/suplier/' . $suplier->suplier_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a>';
+                // $btn .= '<form class="d-inline-block" method="POST" action="' . url('/suplier/' . $suplier->suplier_id) . '">' .
                 //     csrf_field() . method_field('DELETE') .
                 //     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
                 // return $btn;
 
-                $btn = '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
+                $btn = '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id .
                     '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
+                $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id .
                     '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
+                $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id .
                     '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
 
                 return $btn;
             })->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
             ->make(true);
     }
-    
-    // Menampilkan halaman form tambah supplier
+
+    // Menampilkan halaman form tambah suplier
     public function create()
     {
         $breadcrumb = (object) [
-            'title' => 'Tambah supplier',
-            'list' => ['Home', 'supplier', 'Tambah']
+            'title' => 'Tambah suplier',
+            'list' => ['Home', 'suplier', 'Tambah']
         ];
 
         $page = (object) [
-            'title' => 'Tambah supplier baru'
+            'title' => 'Tambah suplier baru'
         ];
 
 
-        $activeMenu = 'supplier'; // set menu yang sedang aktif
+        $activeMenu = 'suplier'; // set menu yang sedang aktif
 
-        return view('supplier.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('suplier.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
-    // Menyimpan data supplier baru
+    // Menyimpan data suplier baru
     public function store(Request $request)
     {
         $request->validate([
-            // supplier_kode harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_supplier kolom supplier_kode
-            'supplier_kode' => 'required|string|min:3|unique:m_supplier,supplier_kode',
-            'supplier_nama' => 'required|string|max:100',
-            'supplier_alamat' => 'required|string|max:255'
+            // suplier_kode harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_suplier kolom suplier_kode
+            'suplier_kode' => 'required|string|min:3|unique:m_suplier,suplier_kode',
+            'suplier_nama' => 'required|string|max:100',
+            'suplier_alamat' => 'required|string|max:255'
 
         ]);
 
         SuplierModel::create([
-            'supplier_kode' => $request->supplier_kode,
-            'supplier_nama' => $request->supplier_nama,
-            'supplier_alamat' => $request->supplier_alamat,
+            'suplier_kode' => $request->suplier_kode,
+            'suplier_nama' => $request->suplier_nama,
+            'suplier_alamat' => $request->suplier_alamat,
         ]);
 
-        return redirect('/supplier')->with('success', 'Data supplier berhasil disimpan');
+        return redirect('/suplier')->with('success', 'Data suplier berhasil disimpan');
     }
 
-    // Menampilkan detail supplier
+    // Menampilkan detail suplier
     public function show(string $id)
     {
-        $supplier = SuplierModel::find($id);
+        $suplier = SuplierModel::find($id);
 
         $breadcrumb = (object) [
-            'title' => 'Detail supplier',
-            'list' => ['Home', 'supplier', 'Detail']
+            'title' => 'Detail suplier',
+            'list' => ['Home', 'suplier', 'Detail']
         ];
 
         $page = (object) [
-            'title' => 'Detail supplier'
+            'title' => 'Detail suplier'
         ];
 
-        $activeMenu = 'supplier'; // set menu yang sedang aktif
+        $activeMenu = 'suplier'; // set menu yang sedang aktif
 
-        return view('supplier.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'supplier' => $supplier, 'activeMenu' => $activeMenu]);
+        return view('suplier.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'suplier' => $suplier, 'activeMenu' => $activeMenu]);
     }
-    // Menampilkan halaman form edit supplier
+    // Menampilkan halaman form edit suplier
     public function edit(string $id)
     {
-        $supplier = SuplierModel::find($id);
+        $suplier = SuplierModel::find($id);
 
 
         $breadcrumb = (object) [
-            'title' => 'Edit supplier',
-            'list' => ['Home', 'supplier', 'Edit']
+            'title' => 'Edit suplier',
+            'list' => ['Home', 'suplier', 'Edit']
         ];
 
         $page = (object) [
-            'title' => 'Edit supplier'
+            'title' => 'Edit suplier'
         ];
 
-        $activeMenu = 'supplier'; // set menu yang sedang aktif
+        $activeMenu = 'suplier'; // set menu yang sedang aktif
 
-        return view('supplier.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'supplier' => $supplier, 'activeMenu' => $activeMenu]);
+        return view('suplier.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'suplier' => $suplier, 'activeMenu' => $activeMenu]);
     }
 
-    // Menyimpan perubahan data supplier
+    // Menyimpan perubahan data suplier
     public function update(Request $request, string $id)
     {
         $request->validate([
-            // supplier_kode harus diisi, berupa string, minimal 3 karakter,
-            // dan bernilai unik di tabel m_supplier kolom supplier_kode kecuali untuk supplier dengan id yang sedang diedit
-            'supplier_kode' => 'required|string|min:3|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
-            'supplier_nama' => 'required|string|max:100',
-            'supplier_alamat' => 'required|string|max:255'
+            // suplier_kode harus diisi, berupa string, minimal 3 karakter,
+            // dan bernilai unik di tabel m_suplier kolom suplier_kode kecuali untuk suplier dengan id yang sedang diedit
+            'suplier_kode' => 'required|string|min:3|unique:m_suplier,suplier_kode,' . $id . ',suplier_id',
+            'suplier_nama' => 'required|string|max:100',
+            'suplier_alamat' => 'required|string|max:255'
         ]);
 
         SuplierModel::find($id)->update([
-            'supplier_kode' => $request->supplier_kode,
-            'supplier_nama' => $request->supplier_nama,
-            'supplier_alamat' => $request->supplier_alamat,
+            'suplier_kode' => $request->suplier_kode,
+            'suplier_nama' => $request->suplier_nama,
+            'suplier_alamat' => $request->suplier_alamat,
         ]);
 
-        return redirect('/supplier')->with('success', 'Data supplier berhasil diubah');
+        return redirect('/suplier')->with('success', 'Data suplier berhasil diubah');
     }
 
     public function destroy(string $id)
@@ -160,24 +159,24 @@ class SuplierController extends Controller
         $check = SuplierModel::find($id);
 
         if (!$check) {
-            // Mengecek apakah data supplier dengan ID yang dimaksud ada atau tidak
-            return redirect('/supplier')->with('error', 'Data supplier tidak ditemukan');
+            // Mengecek apakah data suplier dengan ID yang dimaksud ada atau tidak
+            return redirect('/suplier')->with('error', 'Data suplier tidak ditemukan');
         }
 
         try {
             SuplierModel::destroy($id);
-            return redirect('/supplier')->with('success', 'Data supplier berhasil dihapus');
+            return redirect('/suplier')->with('success', 'Data suplier berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
             // Jika terjadi error ketika menghapus data,  kembali ke halaman dengan pesan error
-            return redirect('/supplier')->with('error', 'Data supplier gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
+            return redirect('/suplier')->with('error', 'Data suplier gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
         }
     }
 
     public function create_ajax()
     {
-        $supplier = SuplierModel::select('supplier_id', 'supplier_nama', 'supplier_alamat')->get();
+        $suplier = SuplierModel::select('suplier_id', 'suplier_nama', 'suplier_alamat')->get();
 
-        return view('supplier.create_ajax', ['supplier' => $supplier]);
+        return view('suplier.create_ajax', ['suplier' => $suplier]);
     }
 
     public function store_ajax(Request $request)
@@ -185,8 +184,8 @@ class SuplierController extends Controller
         //cek apakah ada request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'supplier_kode' => 'required|string|max:10|unique:m_supplier,supplier_kode',
-                'supplier_nama' => 'required|string|max:100',
+                'suplier_kode' => 'required|string|max:10|unique:m_suplier,suplier_kode',
+                'suplier_nama' => 'required|string|max:100',
             ];
 
             // use Illuminate\Support\Facades\Validator
@@ -203,15 +202,15 @@ class SuplierController extends Controller
             SuplierModel::create($request->all());
             return response()->json([
                 'status' => true,
-                'message' => 'Data supplier berhasil disimpan'
+                'message' => 'Data suplier berhasil disimpan'
             ]);
         }
     }
 
     public function edit_ajax(string $id)
     {
-        $supplier = SuplierModel::find($id);
-        return view('supplier.edit_ajax', ['supplier' => $supplier]);
+        $suplier = SuplierModel::find($id);
+        return view('suplier.edit_ajax', ['suplier' => $suplier]);
     }
 
     public function update_ajax(Request $request, $id)
@@ -219,8 +218,8 @@ class SuplierController extends Controller
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'supplier_kode' => 'required|string|max:10|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
-                'supplier_nama' => 'required|string|max:100',
+                'suplier_kode' => 'required|string|max:10|unique:m_suplier,suplier_kode,' . $id . ',suplier_id',
+                'suplier_nama' => 'required|string|max:100',
             ];
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
@@ -245,24 +244,24 @@ class SuplierController extends Controller
                 ]);
             }
         }
-        return redirect('/supplier');
+        return redirect('/suplier');
     }
 
     public function confirm_ajax(string $id)
     {
-        $supplier = SuplierModel::find($id);
+        $suplier = SuplierModel::find($id);
 
-        return view('supplier.confirm_ajax', ['supplier' => $supplier]);
+        return view('suplier.confirm_ajax', ['suplier' => $suplier]);
     }
 
     public function delete_ajax(Request $request, $id)
     {
         //cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
-            $supplier = SuplierModel::find($id);
+            $suplier = SuplierModel::find($id);
             //cek apakah request dari ajax
-            if ($supplier) {
-                $supplier->delete();
+            if ($suplier) {
+                $suplier->delete();
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil dihapus'
@@ -277,17 +276,18 @@ class SuplierController extends Controller
         return redirect('/');
     }
 
-        public function import(){
-        return view('supplier.import');
-        }
+    public function import()
+    {
+        return view('suplier.import');
+    }
 
-        public function import_ajax(Request $request)
-        {
+    public function import_ajax(Request $request)
+    {
         if ($request->ajax() || $request->wantsJson()) {
 
             $rules = [
                 // Validasi file harus xlsx, maksimal 1MB
-                'file_supplier' => ['required', 'mimes:xlsx', 'max:1024']
+                'file_suplier' => ['required', 'mimes:xlsx', 'max:1024']
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -301,7 +301,7 @@ class SuplierController extends Controller
             }
 
             // Ambil file dari request
-            $file = $request->file('file_supplier');
+            $file = $request->file('file_suplier');
 
             // Membuat reader untuk file excel dengan format Xlsx
             $reader = IOFactory::createReader('Xlsx');
@@ -320,9 +320,9 @@ class SuplierController extends Controller
                 foreach ($data as $baris => $value) {
                     if ($baris > 1) { // Baris pertama adalah header, jadi lewati
                         $insert[] = [
-                            'supplier_kode'   => $value['A'],
-                            'supplier_nama'   => $value['B'],
-                            'supplier_alamat' => $value['C'],
+                            'suplier_kode'   => $value['A'],
+                            'suplier_nama'   => $value['B'],
+                            'suplier_alamat' => $value['C'],
                             'created_at'      => now(),
                         ];
                     }
@@ -350,32 +350,32 @@ class SuplierController extends Controller
     public function export_excel()
     {
         //Ambil value barang yang akan diexport
-        $supplier = SuplierModel::select(
-            'supplier_kode',
-            'supplier_nama',
-            'supplier_alamat'
+        $suplier = SuplierModel::select(
+            'suplier_kode',
+            'suplier_nama',
+            'suplier_alamat'
         )
-        ->orderBy('supplier_id')
-        ->get();
+            ->orderBy('suplier_id')
+            ->get();
 
         //load library excel
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet(); //ambil sheet aktif
 
         $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Kode Supplier');
-        $sheet->setCellValue('C1', 'Nama Supplier');
-        $sheet->setCellValue('D1', 'Alamat Supplier');
+        $sheet->setCellValue('B1', 'Kode suplier');
+        $sheet->setCellValue('C1', 'Nama suplier');
+        $sheet->setCellValue('D1', 'Alamat suplier');
 
         $sheet->getStyle('A1:D1')->getFont()->setBold(true); // Set header bold
 
         $no = 1; //Nomor value dimulai dari 1
         $baris = 2; //Baris value dimulai dari 2
-        foreach ($supplier as $key => $value) {
+        foreach ($suplier as $key => $value) {
             $sheet->setCellValue('A' . $baris, $no);
-            $sheet->setCellValue('B' . $baris, $value->supplier_kode);
-            $sheet->setCellValue('C' . $baris, $value->supplier_nama);
-            $sheet->setCellValue('D' . $baris, $value->supplier_alamat);
+            $sheet->setCellValue('B' . $baris, $value->suplier_kode);
+            $sheet->setCellValue('C' . $baris, $value->suplier_nama);
+            $sheet->setCellValue('D' . $baris, $value->suplier_alamat);
             $no++;
             $baris++;
         }
@@ -384,9 +384,9 @@ class SuplierController extends Controller
             $sheet->getColumnDimension($columnID)->setAutoSize(true); //set auto size untuk kolom
         }
 
-        $sheet->setTitle('Data Supplier'); //set judul sheet
-        $writer = IOFactory ::createWriter($spreadsheet, 'Xlsx'); //set writer
-        $filename = 'Data_Supplier_' . date('Y-m-d_H-i-s') . '.xlsx'; //set nama file
+        $sheet->setTitle('Data suplier'); //set judul sheet
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx'); //set writer
+        $filename = 'Data_suplier_' . date('Y-m-d_H-i-s') . '.xlsx'; //set nama file
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -401,22 +401,23 @@ class SuplierController extends Controller
         exit; //keluar dari scriptA
     }
 
-    public function export_pdf(){
-        $supplier = SuplierModel::select(
-            'supplier_kode',
-            'supplier_nama',
-            'supplier_alamat'
+    public function export_pdf()
+    {
+        $suplier = SuplierModel::select(
+            'suplier_kode',
+            'suplier_nama',
+            'suplier_alamat'
         )
-        ->orderBy('supplier_id')
-        ->orderBy('supplier_kode')
-        ->get();
+            ->orderBy('suplier_id')
+            ->orderBy('suplier_kode')
+            ->get();
 
         // use Barryvdh\DomPDF\Facade\Pdf;
-        $pdf = PDF::loadView('supplier.export_pdf', ['supplier' => $supplier]);
+        $pdf = PDF::loadView('suplier.export_pdf', ['suplier' => $suplier]);
         $pdf->setPaper('A4', 'portrait'); // set ukuran kertas dan orientasi
         $pdf->setOption("isRemoteEnabled", true); // set true jika ada gambar dari url
         $pdf->render(); // render pdf
 
-        return $pdf->stream('Data Supplier '.date('Y-m-d H-i-s').'.pdf');
+        return $pdf->stream('Data suplier ' . date('Y-m-d H-i-s') . '.pdf');
     }
 }

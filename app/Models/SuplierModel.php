@@ -10,9 +10,8 @@ class SuplierModel extends Model
 {
     use HasFactory;
 
-    protected $table ='m_suplier' ;        //Mendefinisikan nama tabel yang digunakan oleh model ini
+    protected $table = 'm_suplier';        //Mendefinisikan nama tabel yang digunakan oleh model ini
     protected $primaryKey = 'suplier_id';  //mendefinisikan primary key dari tabel yang digunakan
 
-    protected $fillable = ['suplier_id','suplier_kode', 'suplier_nama'];
-
+    protected $fillable = ['suplier_id', 'suplier_kode', 'suplier_nama'];
 }
